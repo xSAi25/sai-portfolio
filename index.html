@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAi Play List</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: row;
+      font-family: Arial, sans-serif;
+      color: #444;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80') 
+                  no-repeat center center/cover;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(2px);
+      z-index: 0;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      z-index: 2;
+    }
+    h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.8em;
+      background: linear-gradient(45deg, #4caf50, #8bc34a, #cddc39);
+      background-clip: text; 
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 1px 2px 4px rgba(34, 49, 34, 0.3);
+      margin-top: 40px;
+      animation: leafGlow 4s ease-in-out infinite alternate;
+    }
+    @keyframes leafGlow {
+      0% { text-shadow: 1px 2px 4px rgba(34, 49, 34, 0.3); }
+      100% { text-shadow: 2px 4px 10px rgba(139, 195, 74, 0.6); }
+    }
+
+    .circle-player {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle at 30% 30%, #a0c4ffcc, #bdb2ffcc);
+      border-radius: 50%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 3s infinite ease-in-out;
+      margin-top: 30px;
+      z-index: 2;
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .player-content {
+      width: 200px;
+      text-align: center;
+      color: #222;
+    }
+    h2 { font-size: 16px; margin-bottom: 10px; }
+    audio {
+      width: 100%;
+      margin-bottom: 12px;
+      border-radius: 6px;
+    }
+    button {
+      margin: 4px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 20px;  
+      background: #fff;
+      color: #5c6bc0;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover { background: #e8eaf6; transform: scale(1.05); }
+
+    .game-btn {
+      margin-top: 25px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 25px;
+      background: #ff9800;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: background 0.3s, transform 0.2s;
+      z-index: 2;
+    }
+    .game-btn:hover {
+      background: #e68900;
+      transform: scale(1.08);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(6px);
+      padding: 20px;
+      overflow-y: auto;
+      box-shadow: -4px 0 12px rgba(0,0,0,0.2);
+      z-index: 2;
+    }
+    .sidebar h3 {
+      margin-bottom: 12px;
+      color: #4caf50;
+      font-family: 'Pacifico', cursive;
+    }
+    .song-list {
+      list-style: none;
+      padding: 0;
+    }
+    .song-list li {
+      padding: 8px;
+      margin-bottom: 6px;
+      background: #f1f8e9;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .song-list li:hover {
+      background: #dcedc8;
+    }
+    .song-list li.active {
+      background: #aed581;
+      font-weight: bold;
+      border: 2px solid #7cb342;
+    }
+
+    /* Falling leaves */
+    .leaf {
+      position: absolute;
+      top: -40px;
+      font-size: 24px;
+      opacity: 0.9;
+      animation: fall linear forwards;
+      z-index: 1;
+      pointer-events: none;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>SAi Play List</h1>
+    <div class="circle-player">
+      <div class="player-content">
+        <h2 id="title">🍂 No song playing</h2>
+        <audio id="audio" controls autoplay>
+          Your browser does not support the audio element.
+        </audio>
+        <div>
+          <button onclick="prevSong()">⏮ Prev</button>
+          <button onclick="togglePlay()">▶️ Play/Pause</button>
+          <button onclick="nextSong()">⏭ Next</button>
+        </div>
+      </div>
+    </div>
+    <!-- Buttons -->
+    <button class="game-btn" onclick="window.location.href='game.html'">🎮 Go to Games</button>
+    <button class="game-btn" onclick="window.location.href='minigames.html'">🕹️ Mini Games</button>
+  </main>
+
+  <aside class="sidebar">
+    <h3>🎵 Song List</h3>
+    <ul id="songList" class="song-list"></ul>
+  </aside>
+  
+  <script>
+    const playlist = [
+      { title: "Inspirasyon", src: "Inspirasyon.m4a" },
+      { title: "Bagong Yugto", src: "Bagong Yugto.aac" },
+      { title: "Saya Sa Pighati", src: "song3.mp3" }
+    ];
+
+    let currentIndex = 0;
+    const audio = document.getElementById('audio');
+    const title = document.getElementById('title');
+    const songList = document.getElementById('songList');
+
+    function loadSong(index) {
+      currentIndex = index;
+      audio.src = playlist[index].src;
+      title.textContent = `🍂 Now playing: ${playlist[index].title}`;
+      highlightSong();
+      audio.play();
+    }
+
+    function prevSong() {
+      currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+      loadSong(currentIndex);
+    }
+
+    function nextSong() {
+      currentIndex = (currentIndex + 1) % playlist.length;
+      loadSong(currentIndex);
+    }
+
+    function togglePlay() {
+      audio.paused ? audio.play() : audio.pause();
+    }
+
+    audio.addEventListener('ended', nextSong);
+
+    // Populate sidebar list
+    playlist.forEach((song, index) => {
+      const li = document.createElement('li');
+      li.textContent = song.title;
+      li.onclick = () => {
+        loadSong(index);
+      };
+      songList.appendChild(li);
+    });
+
+    function highlightSong() {
+      const items = songList.querySelectorAll('li');
+      items.forEach((li, i) => {
+        li.classList.toggle('active', i === currentIndex);
+      });
+    }
+
+    // Load first song autoplay
+    loadSong(currentIndex);
+
+    // Falling leaves
+    const leafEmojis = ["🍂","🍁","🍃"];
+    function createLeaf() {
+      const leaf = document.createElement('div');
+      leaf.classList.add('leaf');
+      leaf.textContent = leafEmojis[Math.floor(Math.random() * leafEmojis.length)];
+      leaf.style.left = Math.random() * 100 + 'vw';
+      leaf.style.fontSize = Math.random() * 12 + 18 + 'px';
+      leaf.style.animationDuration = Math.random() * 5 + 5 + 's';
+      document.body.appendChild(leaf);
+      setTimeout(() => leaf.remove(), 10000);
+    }
+    setInterval(createLeaf, 400);
+  </script>
+</body>
+</html>

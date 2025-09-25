@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🚗 Car Racing Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: white;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    #gameArea {
+      position: relative;
+      width: 400px;
+      height: 600px;
+      background: #333;
+      overflow: hidden;
+      border: 4px solid white;
+    }
+    /* Player car */
+    .car {
+      position: absolute;
+      bottom: 20px;
+      left: 180px;
+      width: 50px;
+      height: 90px;
+      background: #d32f2f;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.5);
+    }
+    .car::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 8px;
+      width: 34px;
+      height: 25px;
+      background: #90caf9; /* windshield */
+      border-radius: 4px;
+    }
+    .car::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 12px;
+      width: 26px;
+      height: 20px;
+      background: #1976d2; /* rear window */
+      border-radius: 4px;
+    }
+    /* Wheels */
+    .wheel {
+      position: absolute;
+      width: 12px;
+      height: 20px;
+      background: #111;
+      border-radius: 3px;
+    }
+    .wheel.left {
+      left: -12px;
+    }
+    .wheel.right {
+      right: -12px;
+    }
+    .wheel.top {
+      top: 15px;
+    }
+    .wheel.bottom {
+      bottom: 15px;
+    }
+
+    /* Enemy cars */
+    .enemy {
+      position: absolute;
+      width: 50px;
+      height: 90px;
+      background: #fdd835;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.5);
+    }
+    .enemy::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 8px;
+      width: 34px;
+      height: 25px;
+      background: #fff59d; /* windshield */
+      border-radius: 4px;
+    }
+    .enemy::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 12px;
+      width: 26px;
+      height: 20px;
+      background: #fbc02d; /* rear window */
+      border-radius: 4px;
+    }
+
+    .line {
+      position: absolute;
+      width: 10px;
+      height: 100px;
+      background: white;
+      left: 195px;
+      opacity: 0.7;
+    }
+    #score {
+      margin: 15px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .back-btn {
+      margin-top: 15px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      background: #ff9800;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: background 0.3s, transform 0.2s;
+    }
+    .back-btn:hover {
+      background: #e68900;
+      transform: scale(1.08);
+    }
+  </style>
+</head>
+<body>
+  <h1>🚗 Car Racing Game</h1>
+  <p id="score">Score: 0</p>
+  <div id="gameArea">
+    <div class="car" id="playerCar">
+      <div class="wheel left top"></div>
+      <div class="wheel right top"></div>
+      <div class="wheel left bottom"></div>
+      <div class="wheel right bottom"></div>
+    </div>
+  </div>
+  <button class="back-btn" onclick="window.location.href='minigames.html'">⬅ Back to Mini Games</button>
+
+  <script>
+    const gameArea = document.getElementById("gameArea");
+    const playerCar = document.getElementById("playerCar");
+    const scoreDisplay = document.getElementById("score");
+
+    let keys = { ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false };
+    let player = { speed: 5, score: 0, x: 180, y: 500, start: false };
+
+    document.addEventListener("keydown", e => keys[e.key] = true);
+    document.addEventListener("keyup", e => keys[e.key] = false);
+
+    function startGame() {
+      player.start = true;
+      player.score = 0;
+
+      // Road lines
+      for (let i = 0; i < 5; i++) {
+        let line = document.createElement("div");
+        line.setAttribute("class", "line");
+        line.y = i * 150;
+        line.style.top = line.y + "px";
+        gameArea.appendChild(line);
+      }
+
+      // Enemy cars
+      for (let i = 0; i < 3; i++) {
+        let enemy = document.createElement("div");
+        enemy.setAttribute("class", "enemy");
+        enemy.y = (i + 1) * -300;
+        enemy.style.top = enemy.y + "px";
+        enemy.style.left = Math.floor(Math.random() * 350) + "px";
+        gameArea.appendChild(enemy);
+      }
+
+      window.requestAnimationFrame(playGame);
+    }
+
+    function playGame() {
+      if (!player.start) return;
+
+      // Road lines move
+      let lines = document.querySelectorAll(".line");
+      lines.forEach(line => {
+        line.y += player.speed;
+        if (line.y > 600) line.y -= 750;
+        line.style.top = line.y + "px";
+      });
+
+      // Enemy movement
+      let enemies = document.querySelectorAll(".enemy");
+      enemies.forEach(enemy => {
+        enemy.y += player.speed;
+        if (enemy.y > 600) {
+          enemy.y = -200;
+          enemy.style.left = Math.floor(Math.random() * 350) + "px";
+        }
+        enemy.style.top = enemy.y + "px";
+
+        if (isCollide(playerCar, enemy)) endGame();
+      });
+
+      // Player movement
+      if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
+      if (keys.ArrowRight && player.x < (gameArea.offsetWidth - 50)) player.x += player.speed;
+      if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
+      if (keys.ArrowDown && player.y < (gameArea.offsetHeight - 90)) player.y += player.speed;
+
+      playerCar.style.left = player.x + "px";
+      playerCar.style.top = player.y + "px";
+
+      player.score++;
+      scoreDisplay.textContent = "Score: " + player.score;
+
+      window.requestAnimationFrame(playGame);
+    }
+
+    function isCollide(a, b) {
+      let aRect = a.getBoundingClientRect();
+      let bRect = b.getBoundingClientRect();
+      return !(
+        aRect.bottom < bRect.top ||
+        aRect.top > bRect.bottom ||
+        aRect.right < bRect.left ||
+        aRect.left > bRect.right
+      );
+    }
+
+    function endGame() {
+      player.start = false;
+      alert("💥 Crash! Game Over! Final Score: " + player.score);
+      window.location.reload();
+    }
+
+    startGame();
+  </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mini Games 🎮</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden; /* keep icons inside screen */
+    }
+    header {
+      margin: 20px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 1.2em;
+      opacity: 0.8;
+    }
+
+    .game-menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      width: 80%;
+      max-width: 900px;
+      margin-top: 40px;
+    }
+    .game-card {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+      transition: transform 0.3s, background 0.3s;
+      cursor: pointer;
+    }
+    .game-card:hover {
+      transform: scale(1.05);
+      background: rgba(255,255,255,0.2);
+    }
+    .game-card h2 {
+      margin: 10px 0;
+      font-size: 1.5em;
+    }
+    .game-card p {
+      font-size: 0.9em;
+    }
+
+    .back-btn {
+      margin-top: 40px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      background: #ff9800;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: background 0.3s, transform 0.2s;
+    }
+    .back-btn:hover {
+      background: #e68900;
+      transform: scale(1.08);
+    }
+
+    /* Fallen icons */
+    .fallen {
+      position: absolute;
+      top: -50px;
+      font-size: 2em;
+      opacity: 0.8;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-50px) rotate(0deg);
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎮 Mini Games</h1>
+    <p>Choose a game and have fun!</p>
+  </header>
+
+  <section class="game-menu">
+    <div class="game-card" onclick="window.location.href='minitetris.html'">
+      <h2>🟦 Tetris</h2>
+      <p>Stack falling blocks and clear lines.</p>
+    </div>
+    <div class="game-card" onclick="window.location.href='minicar.html'">
+      <h2>🚗 Car Racing</h2>
+      <p>Dodge traffic and race for the highest score.</p>
+    </div>
+    <div class="game-card" onclick="window.location.href='minisnake.html'">
+      <h2>🐍 Snake</h2>
+      <p>Eat food and grow longer without crashing.</p>
+    </div>
+  </section>
+
+  <!-- Back button -->
+  <button class="back-btn" onclick="window.location.href='index.html'">⬅ Back to Playlist</button>
+
+  <!-- Fallen icons (leaves) -->
+  <div class="fallen" style="left:10%">🌌</div>
+  <div class="fallen" style="left:30%; animation-duration:7s;">🚗</div>
+  <div class="fallen" style="left:50%; animation-duration:10s;">🐍</div>
+  <div class="fallen" style="left:70%; animation-duration:6s;">🟩</div>
+  <div class="fallen" style="left:90%; animation-duration:8s;">🧩</div>
+
+</body>
+</html>
