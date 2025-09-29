@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Channel</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+
+    :root {
+      --bg1: #0f0f1c;
+      --bg2: #1a1a2e;
+      --card-bg: rgba(20, 20, 35, 0.85);
+      --card-text: #ffffff;
+      --accent: #ff416c;
+      --accent2: #ff4b2b;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    header {
+      width: 100%;
+      padding: 18px 16px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 26px;
+      letter-spacing: 2px;
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+      text-transform: uppercase;
+      color: #ff416c;
+    }
+
+    /* Back button */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      padding: 12px 22px;
+      border-radius: 12px;
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px var(--accent), 0 0 25px var(--accent2);
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 20px #ff416c, 0 0 40px #ff4b2b;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      padding: 28px 16px;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      width: 200px;
+      height: 200px;
+      background: var(--card-bg);
+      color: var(--card-text);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(255, 65, 108, 0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 0 25px #ff416c, 0 0 45px #ff4b2b;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px; /* 🔥 fixed height */
+      object-fit: contain; /* keep aspect ratio inside box */
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 8px rgba(241, 238, 238, 0.8));
+    }
+
+    .btn {
+      margin-top: auto; /* push to bottom */
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 1px;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 15px #ff416c, 0 0 25px #ff4b2b;
+    }
+  </style>
+</head>
+<body>
+  <header>🌐 My Channel</header>
+
+  <!-- Back button -->
+  <a href="index.html" class="back-btn">⬅ Back</a>
+
+  <main class="container">
+    <!-- Facebook -->
+    <article class="card">
+      <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Facebook_icon.svg" alt="Facebook Logo">
+      <a class="btn" href="https://www.facebook.com/profile.php?id=100070765399438" target="_blank" rel="noopener noreferrer">Visit</a>
+    </article>
+
+    <!-- YouTube -->
+    <article class="card">
+      <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube Logo">
+      <a class="btn" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">Visit</a>
+    </article>
+
+    <!-- TikTok -->
+    <article class="card">
+      <img class="logo" src="https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg" alt="TikTok Logo">
+      <a class="btn" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer">Visit</a>
+    </article>
+  </main>
+</body>
+</html>
