@@ -38,7 +38,6 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 20px;
-      padding-right: 270px; /* ✅ space for sidebar */
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
       z-index: 100;
       box-sizing: border-box;
@@ -54,7 +53,6 @@
       gap: 20px;
       margin: 0;
       padding: 0;
-      flex-wrap: wrap; /* ✅ wrap links if too long */
     }
     nav ul li a {
       text-decoration: none;
@@ -83,8 +81,8 @@
       overflow-y: auto;
       box-shadow: -4px 0 12px rgba(0,0,0,0.2);
       z-index: 2;
-      margin-top: 60px; /* ✅ below nav */
-      height: calc(100vh - 60px); /* ✅ full height */
+      margin-top: 60px; /* below nav */
+      height: calc(100vh - 60px);
     }
     .sidebar h3 {
       margin-bottom: 12px;
@@ -114,13 +112,14 @@
 
     main {
       flex: 1;
-      margin-top: 80px; /* ✅ leave space for nav */
-      margin-right: 250px; /* ✅ leave space for sidebar */
+      margin-top: 80px;
+      margin-right: 250px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       z-index: 2;
+      padding: 10px;
     }
 
     h1 {
@@ -213,6 +212,59 @@
       0% { transform: translateY(0) rotate(0deg); opacity: 1; }
       100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
     }
+
+    /* ✅ Responsive */
+    @media (max-width: 1024px) {
+      nav ul {
+        gap: 12px;
+      }
+      .sidebar {
+        width: 200px;
+      }
+      main {
+        margin-right: 200px;
+      }
+    }
+    @media (max-width: 768px) {
+      nav ul {
+        display: none; /* hide menu */
+      }
+      nav .hamburger {
+        display: block;
+      }
+      .sidebar {
+        position: fixed;
+        right: -250px;
+        top: 60px;
+        transition: right 0.3s ease;
+        height: calc(100vh - 60px);
+      }
+      .sidebar.active {
+        right: 0;
+      }
+      main {
+        margin-right: 0;
+      }
+      .circle-player {
+        width: 250px;
+        height: 250px;
+      }
+    }
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2em;
+      }
+      .circle-player {
+        width: 220px;
+        height: 220px;
+      }
+      .player-content {
+        width: 160px;
+      }
+      nav .logo {
+        font-size: 1.3em;
+      }
+    }
   </style>
 </head>
 <body>
@@ -222,7 +274,7 @@
     <ul>
       <li><a href="game.html">🎮 Go to Games</a></li>
       <li><a href="minigames.html">🕹️ Mini Games</a></li>
-      <li><a href="channel.html">📺 My Channel</a></li> <!-- ✅ Fixed -->
+      <li><a href="channel.html">📺 My Channel</a></li>
     </ul>
     <button class="hamburger" onclick="toggleSidebar()">☰</button>
   </nav>
@@ -242,10 +294,9 @@
         </div>
       </div>
     </div>
-    <!-- Extra Buttons -->
   </main>
 
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <h3>🎵 Song List</h3>
     <ul id="songList" class="song-list"></ul>
   </aside>
@@ -261,6 +312,7 @@
     const audio = document.getElementById('audio');
     const title = document.getElementById('title');
     const songList = document.getElementById('songList');
+    const sidebar = document.getElementById('sidebar');
 
     function loadSong(index) {
       currentIndex = index;
@@ -282,6 +334,10 @@
 
     function togglePlay() {
       audio.paused ? audio.play() : audio.pause();
+    }
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('active');
     }
 
     audio.addEventListener('ended', nextSong);
