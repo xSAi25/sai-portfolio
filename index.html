@@ -1,7 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Shared Storage</title>
+  <title>Shared Storage - Direct Download</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    input, button {
+      padding: 8px;
+      margin: 5px 0;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    #progressBox {
+      width: 300px;
+      height: 20px;
+      background: #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 10px;
+      display: none;
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: #4caf50;
+      transition: width 0.3s;
+    }
+
+    #progressText {
+      margin-top: 4px;
+      font-size: 12px;
+    }
+  </style>
 </head>
 <body>
 
@@ -9,6 +51,11 @@
 
 <input type="file" id="fileInput" />
 <button onclick="uploadFile()">Upload</button>
+
+<div id="progressBox">
+  <div id="progressBar"></div>
+</div>
+<span id="progressText">0%</span>
 
 <p id="result"></p>
 
@@ -20,16 +67,37 @@
 <ul id="fileList"></ul>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9OUpZl3bJLA3Tj8-0FD4CYY4wYH7-uNHb8dob3MdJIm67tSPXzZl_fIxAEs74qxdJ/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwYrbDB3oaW_R6pJz1oFcrxt7RWS4w6bmYZ_wABQJv1-HEEMq7EMmlXmxfCvVe86wBm/exec";
 
+let progressTimer;
+
+// Upload a file with progress
 function uploadFile() {
   const file = document.getElementById("fileInput").files[0];
-  if (!file) {
-    alert("Please select a file");
-    return;
-  }
+  if (!file) return alert("Please select a file");
 
   const reader = new FileReader();
+  const progressBox = document.getElementById("progressBox");
+  const progressBar = document.getElementById("progressBar");
+  const progressText = document.getElementById("progressText");
+  const result = document.getElementById("result");
+
+  // Reset progress
+  progressBox.style.display = "block";
+  progressBar.style.width = "0%";
+  progressText.innerText = "0%";
+  result.innerHTML = "";
+
+  // Fake progress (simulate upload percentage)
+  let percent = 0;
+  progressTimer = setInterval(() => {
+    if (percent < 90) { // stop at 90% until upload finishes
+      percent += 3;
+      progressBar.style.width = percent + "%";
+      progressText.innerText = percent + "%";
+    }
+  }, 200);
+
   reader.onload = function () {
     const base64 = reader.result.split(",")[1];
 
@@ -44,18 +112,30 @@ function uploadFile() {
     })
     .then(res => res.json())
     .then(data => {
-      result.innerHTML = `
-        ✅ Uploaded: <strong>${data.fileName}</strong><br>
-        <a href="${data.fileUrl}" target="_blank">View</a> |
-        <a href="${data.fileUrl}&export=download">Download</a>
-      `;
-      loadFiles();
+      clearInterval(progressTimer);
+      progressBar.style.width = "100%";
+      progressText.innerText = "100%";
+
+      if (data.status === "success") {
+        result.innerHTML = `
+          ✅ Uploaded: <strong>${data.fileName}</strong><br>
+          <a href="${data.downloadUrl}" download>Download</a>
+        `;
+        loadFiles();
+      } else {
+        alert("Upload failed");
+      }
+    })
+    .catch(() => {
+      clearInterval(progressTimer);
+      alert("Upload failed");
     });
   };
 
   reader.readAsDataURL(file);
 }
 
+// Load existing files
 function loadFiles() {
   fetch(SCRIPT_URL)
     .then(res => res.json())
@@ -66,15 +146,15 @@ function loadFiles() {
       files.forEach(file => {
         const li = document.createElement("li");
         li.innerHTML = `
-          ${file.name} —
-          <a href="${file.url}" target="_blank">View</a> |
-          <a href="${file.url}&export=download">Download</a>
+          ${file.name} — <a href="${file.downloadUrl}" download>Download</a>
         `;
         list.appendChild(li);
       });
-    });
+    })
+    .catch(() => alert("Failed to load files"));
 }
 
+// Load files on page load
 loadFiles();
 </script>
 
