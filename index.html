@@ -1,32 +1,65 @@
-<!DOCTYPE html>
+
 <html>
 <head>
   <title>Shared Storage - Direct Download</title>
+
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f6fa;
+      margin: 0;
+      padding: 0 20px;
+      color: #333;
+    }
+
+    h2, h3 {
+      color: #2f3640;
+    }
+
+    .upload-section {
+      background: #ffffff;
       padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      max-width: 500px;
+      margin: 20px auto;
     }
 
-    input, button {
+    input[type="file"] {
+      width: 100%;
+      margin-bottom: 12px;
       padding: 8px;
-      margin: 5px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
     }
 
-    ul {
-      list-style-type: none;
-      padding-left: 0;
+    button {
+      background: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    li {
-      margin-bottom: 6px;
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      background: #45a049;
     }
 
     #progressBox {
-      width: 300px;
+      width: 100%;
       height: 20px;
-      background: #ddd;
-      border-radius: 5px;
+      background: #eee;
+      border-radius: 10px;
       overflow: hidden;
       margin-top: 10px;
       display: none;
@@ -35,43 +68,103 @@
     #progressBar {
       height: 100%;
       width: 0%;
-      background: #4caf50;
-      transition: width 0.3s;
+      background: linear-gradient(90deg, #4caf50, #81c784);
     }
 
     #progressText {
-      margin-top: 4px;
       font-size: 12px;
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .file-list-section {
+      max-width: 500px;
+      margin: 20px auto;
+    }
+
+    .file-list {
+      max-height: 300px;
+      overflow-y: auto;
+      list-style: none;
+      padding: 0;
+      margin-top: 10px;
+    }
+
+    .file-list li {
+      background: #ffffff;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .download-btn {
+      background: #4caf50;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .download-btn:hover {
+      background: #45a049;
+    }
+
+    /* Spinner inside refresh button */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 3px solid rgba(255,255,255,0.4);
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+
+    .loading .spinner {
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
+
 <body>
 
-<h2>Upload File to Public Storage</h2>
+<div class="upload-section">
+  <h2>Upload File to Shared Storage</h2>
+  <input type="file" id="fileInput">
+  <button onclick="uploadFile()">Upload</button>
 
-<input type="file" id="fileInput" />
-<button onclick="uploadFile()">Upload</button>
+  <div id="progressBox">
+    <div id="progressBar"></div>
+  </div>
+  <div id="progressText">0%</div>
 
-<div id="progressBox">
-  <div id="progressBar"></div>
+  <p id="result"></p>
 </div>
-<span id="progressText">0%</span>
 
-<p id="result"></p>
+<div class="file-list-section">
+  <h3>📂 Files in Shared Folder</h3>
 
-<hr>
+  <!-- Refresh button with spinner -->
+  <button id="refreshBtn" onclick="loadFiles()">
+    <span class="spinner"></span>
+    Refresh
+  </button>
 
-<h3>📂 Files in Public Folder</h3>
-<button onclick="loadFiles()">Refresh List</button>
-
-<ul id="fileList"></ul>
+  <ul id="fileList" class="file-list"></ul>
+</div>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwYrbDB3oaW_R6pJz1oFcrxt7RWS4w6bmYZ_wABQJv1-HEEMq7EMmlXmxfCvVe86wBm/exec";
 
-let progressTimer;
-
-// Upload a file with progress
 function uploadFile() {
   const file = document.getElementById("fileInput").files[0];
   if (!file) return alert("Please select a file");
@@ -82,79 +175,72 @@ function uploadFile() {
   const progressText = document.getElementById("progressText");
   const result = document.getElementById("result");
 
-  // Reset progress
   progressBox.style.display = "block";
   progressBar.style.width = "0%";
   progressText.innerText = "0%";
-  result.innerHTML = "";
 
-  // Fake progress (simulate upload percentage)
   let percent = 0;
-  progressTimer = setInterval(() => {
-    if (percent < 90) { // stop at 90% until upload finishes
+  const timer = setInterval(() => {
+    if (percent < 90) {
       percent += 3;
       progressBar.style.width = percent + "%";
       progressText.innerText = percent + "%";
     }
   }, 200);
 
-  reader.onload = function () {
+  reader.onload = () => {
     const base64 = reader.result.split(",")[1];
-
     const formData = new FormData();
     formData.append("file", base64);
     formData.append("name", file.name);
     formData.append("type", file.type);
 
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      clearInterval(progressTimer);
-      progressBar.style.width = "100%";
-      progressText.innerText = "100%";
+    fetch(SCRIPT_URL, { method: "POST", body: formData })
+      .then(res => res.json())
+      .then(data => {
+        clearInterval(timer);
+        progressBar.style.width = "100%";
+        progressText.innerText = "100%";
 
-      if (data.status === "success") {
-        result.innerHTML = `
-          ✅ Uploaded: <strong>${data.fileName}</strong><br>
-          <a href="${data.downloadUrl}" download>Download</a>
-        `;
-        loadFiles();
-      } else {
-        alert("Upload failed");
-      }
-    })
-    .catch(() => {
-      clearInterval(progressTimer);
-      alert("Upload failed");
-    });
+        if (data.status === "success") {
+          result.innerHTML = `✅ Uploaded: <strong>${data.fileName}</strong>`;
+          loadFiles();
+        }
+      });
   };
 
   reader.readAsDataURL(file);
 }
 
-// Load existing files
 function loadFiles() {
+  const list = document.getElementById("fileList");
+  const refreshBtn = document.getElementById("refreshBtn");
+
+  list.innerHTML = "";
+  refreshBtn.disabled = true;
+  refreshBtn.classList.add("loading");
+
   fetch(SCRIPT_URL)
     .then(res => res.json())
     .then(files => {
-      const list = document.getElementById("fileList");
-      list.innerHTML = "";
-
       files.forEach(file => {
         const li = document.createElement("li");
         li.innerHTML = `
-          ${file.name} — <a href="${file.downloadUrl}" download>Download</a>
+          <span>${file.name}</span>
+          <a href="${file.downloadUrl}" download class="download-btn">Download</a>
         `;
         list.appendChild(li);
       });
+      refreshBtn.disabled = false;
+      refreshBtn.classList.remove("loading");
     })
-    .catch(() => alert("Failed to load files"));
+    .catch(() => {
+      alert("Failed to load files");
+      refreshBtn.disabled = false;
+      refreshBtn.classList.remove("loading");
+    });
 }
 
-// Load files on page load
 loadFiles();
 </script>
 
