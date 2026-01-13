@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html>
 <head>
   <title>Shared Storage - Direct Download</title>
@@ -101,6 +101,11 @@
       align-items: center;
     }
 
+    .file-info small {
+      color: #777;
+      font-size: 12px;
+    }
+
     .download-btn {
       background: #4caf50;
       color: #fff;
@@ -114,7 +119,6 @@
       background: #45a049;
     }
 
-    /* Spinner inside refresh button */
     .spinner {
       width: 16px;
       height: 16px;
@@ -153,7 +157,6 @@
 <div class="file-list-section">
   <h3>📂 Files in Shared Folder</h3>
 
-  <!-- Refresh button with spinner -->
   <button id="refreshBtn" onclick="loadFiles()">
     <span class="spinner"></span>
     Refresh
@@ -163,7 +166,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwYrbDB3oaW_R6pJz1oFcrxt7RWS4w6bmYZ_wABQJv1-HEEMq7EMmlXmxfCvVe86wBm/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydoSU8hCvS13LhP_gD-WVaPcpmhAeBsOHgxIPuiEnZTk8CqSJpCOHzhGqcWzIQao-vqg/exec";
 
 function uploadFile() {
   const file = document.getElementById("fileInput").files[0];
@@ -201,11 +204,8 @@ function uploadFile() {
         clearInterval(timer);
         progressBar.style.width = "100%";
         progressText.innerText = "100%";
-
-        if (data.status === "success") {
-          result.innerHTML = `✅ Uploaded: <strong>${data.fileName}</strong>`;
-          loadFiles();
-        }
+        result.innerHTML = `✅ Uploaded: <strong>${data.fileName}</strong>`;
+        loadFiles();
       });
   };
 
@@ -226,8 +226,11 @@ function loadFiles() {
       files.forEach(file => {
         const li = document.createElement("li");
         li.innerHTML = `
-          <span>${file.name}</span>
-          <a href="${file.downloadUrl}" download class="download-btn">Download</a>
+          <div class="file-info">
+            <strong>${file.name}</strong><br>
+            <small>Uploaded: ${file.uploadDate}</small>
+          </div>
+          <a href="${file.downloadUrl}" class="download-btn">Download</a>
         `;
         list.appendChild(li);
       });
